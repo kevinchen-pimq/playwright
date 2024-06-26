@@ -3,11 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "watch:bdd": "npx nodemon -w ./playwright -e feature,js --ignore '*.spec.js' --exec \"npx bddgen\"",
+    "watch:pw": "playwright test --ui",
+    "dev": "run-p watch:*"
+  },
   "author": "",
   "license": "UNLICENSED",
   "devDependencies": {
+    "@cucumber/cucumber": "^10.8.0",
     "@playwright/test": "^1.45.0",
-    "@types/node": "^20.14.8"
+    "@types/node": "^20.14.8",
+    "npm-run-all": "^4.1.5",
+    "playwright-bdd": "^6.5.2"
   }
 }

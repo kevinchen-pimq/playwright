@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { userAuthFile } from '../../constants';
 
-test.use({ 
+test.use({
   storageState: userAuthFile,
   // launchOptions: { slowMo: 500 },
 });
@@ -33,7 +33,9 @@ test.describe('人員管理', () => {
     await page.getByRole('button', { name: '手動新增' }).click();
     await page.getByLabel('機構名稱').fill(ADD_DATA.companyName);
     await page.getByLabel('機構名稱').press('Enter');
-    await expect(page.getByLabel('機構名稱')).toHaveValue(ADD_DATA.companyName);
+    await expect(
+      page.locator('.ant-form-item', { has: page.getByLabel('機構名稱') }),
+    ).toContainText(ADD_DATA.companyName);
 
     await page.getByLabel('姓名').fill(ADD_DATA.name);
     await page.getByLabel('帳號').fill(ADD_DATA.account);
@@ -58,10 +60,18 @@ test.describe('人員管理', () => {
     await page.getByRole('button', { name: '新增' }).click();
 
     // Verify error messages within ant-form-item
-    await expect(page.locator('.ant-form-item', { hasText: '機構名稱' }).getByText('此為必填項目')).toBeVisible();
-    await expect(page.locator('.ant-form-item', { hasText: '姓名' }).getByText('此為必填項目')).toBeVisible();
-    await expect(page.locator('.ant-form-item', { hasText: '帳號' }).getByText('此為必填項目')).toBeVisible();
-    await expect(page.locator('.ant-form-item', { hasText: '密碼' }).getByText('此為必填項目')).toBeVisible();
+    await expect(
+      page.locator('.ant-form-item', { has: page.getByLabel('機構名稱') }),
+    ).toContainText('此為必填項目');
+    await expect(
+      page.locator('.ant-form-item', { has: page.getByLabel('姓名') }),
+    ).toContainText('此為必填項目');
+    await expect(
+      page.locator('.ant-form-item', { has: page.getByLabel('帳號') }),
+    ).toContainText('此為必填項目');
+    await expect(
+      page.locator('.ant-form-item', { has: page.getByLabel('密碼') }),
+    ).toContainText('此為必填項目');
 
     // Verify length restrictions
     const longName = 'a'.repeat(46);
@@ -74,13 +84,21 @@ test.describe('人員管理', () => {
     await page.getByLabel('密碼').fill(shortPassword);
     await page.getByRole('button', { name: '新增' }).click();
 
-    await expect(page.locator('.ant-form-item', { hasText: '姓名' }).getByText('必須小於 45 個字')).toBeVisible();
-    await expect(page.locator('.ant-form-item', { hasText: '帳號' }).getByText('必須小於 45 個字')).toBeVisible();
-    await expect(page.locator('.ant-form-item', { hasText: '密碼' }).getByText('密碼須在6-64字符之間')).toBeVisible();
+    await expect(
+      page.locator('.ant-form-item', { has: page.getByLabel('姓名') }),
+    ).toContainText('必須小於 45 個字');
+    await expect(
+      page.locator('.ant-form-item', { has: page.getByLabel('帳號') }),
+    ).toContainText('必須小於 45 個字');
+    await expect(
+      page.locator('.ant-form-item', { has: page.getByLabel('密碼') }),
+    ).toContainText('密碼須在6-64字符之間');
 
     await page.getByLabel('密碼').fill(longPassword);
     await page.getByRole('button', { name: '新增' }).click();
-    await expect(page.locator('.ant-form-item', { hasText: '密碼' }).getByText('密碼須在6-64字符之間')).toBeVisible();
+    await expect(
+      page.locator('.ant-form-item', { has: page.getByLabel('密碼') }),
+    ).toContainText('密碼須在6-64字符之間');
   });
 
   test('人員管理 - 編輯', async ({ page }) => {

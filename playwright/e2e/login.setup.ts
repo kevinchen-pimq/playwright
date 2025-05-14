@@ -1,33 +1,15 @@
-import { test as setup, expect } from "@playwright/test";
-import { statSync } from "fs";
+import { test as setup } from '@playwright/test';
+import { userAuthFile } from './constants';
 
-const authFile = "playwright/.cache/.auth/user.json";
+setup('Create Auth', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByRole('textbox', { name: '請輸入帳號' }).fill('user');
+  await page.getByRole('textbox', { name: '請輸入密碼' }).fill('password');
+  await page.getByRole('button', { name: '登入' }).click();
 
-// overwrite config not show browser
-setup.use({ headless: true });
+  await page.waitForResponse(
+    (resp) => resp.url().includes('/auth') && resp.status() === 200,
+  );
 
-setup("authenticate", async ({ request, context, baseURL }) => {
-  // Send authentication request. Replace with your own.
-  await request.post("/api/auth", {
-    data: {
-      account: "joy",
-      password:
-        "37268335dd6931045bdcdf92623ff819a64244b53d0e746d438797349d4da578",
-    },
-  });
-  const storage = await request.storageState();
-  await context.addCookies([
-    ...storage.cookies,
-    {
-      name: "i18next",
-      value: "zh-TW",
-      domain: new URL(baseURL ?? "http://localhost").hostname,
-      path: "/",
-      expires: -1,
-      httpOnly: false,
-      secure: false,
-      sameSite: "Strict",
-    },
-  ]);
-  await context.storageState({ path: authFile });
+  await page.context().storageState({ path: userAuthFile });
 });

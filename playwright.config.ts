@@ -1,12 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-import { defineBddConfig } from "playwright-bdd";
 
-const testDir = defineBddConfig({
-  paths: ["playwright/e2e/**/*.feature"],
-  require: ["playwright/e2e/**/*.feature.js"],
-  outputDir: "playwright/e2e",
-  featuresRoot: "playwright/e2e",
-});
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -18,7 +11,7 @@ const testDir = defineBddConfig({
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir,
+  testDir: './playwright/e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -41,12 +34,18 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    { name: "setup", testMatch: /.*\.setup\.ts/ },
+    {
+      name: "setup", testMatch: /.*\.setup\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        locale: 'zh-TW',
+      },
+    },
     {
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
-        storageState: "playwright/.cache/.auth/user.json",
+        locale: 'zh-TW',
       },
       dependencies: ["setup"],
     },
